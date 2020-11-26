@@ -1,6 +1,6 @@
 
 import { createStore } from 'redux';
-import {task} from '../components/tasks/index';
+import {taskData} from '../components/tasks';
 
 interface actiontype {
   type : string,
@@ -30,7 +30,7 @@ function taskStateReducer(taskState: string) {
   return (state: any , action: actiontype ) => {
     return {
       ...state,
-      tasks: state.tasks.map((task:task) =>
+      tasks: state.tasks.map((task:taskData) =>
         task.id === action.id ? { ...task, state: taskState } : task
       ),
     };

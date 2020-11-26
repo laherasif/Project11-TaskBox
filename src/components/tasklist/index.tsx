@@ -1,7 +1,7 @@
 import React from 'react';
 import { FC } from 'react';
 import Task from '../tasks/index';
-import { task } from '../tasks/index';
+import { taskData } from '../tasks';
 import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -45,7 +45,7 @@ export function CircularStatic() {
 }
 export interface prop {
     loading?: boolean,
-    tasks?: task[] | undefined
+    tasks?: taskData[] | undefined
 }
  export const TaskList: FC<prop> = ({ loading, tasks}) => {
 
@@ -91,6 +91,6 @@ TaskList.defaultProps = {
 
 export default connect(
     ({ tasks } : any) => ({
-      tasks: tasks.filter((t : task) => t.state === 'Default' || t.state === 'Archieved' || t.state === 'Pinned'),
+      tasks: tasks.filter((t : taskData) => t.state === 'Default' || t.state === 'Archieved' || t.state === 'Pinned'),
     })
   )(TaskList);

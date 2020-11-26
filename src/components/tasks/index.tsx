@@ -7,11 +7,11 @@ import { archiveTask, deleteTask, pinTask } from '../../ReduxStore/redux';
 
 
 //********************************* */
-export interface task {
+export interface taskData {
   id : string, title : string, state : any
 }
  export interface props {
-    task : task,
+  task : taskData,
 }
  const Task : FC<props> = ({task : {id, title,  state}}) => {
   const dispatch = useDispatch();
