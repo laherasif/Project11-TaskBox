@@ -1,4 +1,3 @@
-import { truncate } from 'fs';
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from "react-redux";
 // import { uuid } from 'uuidv4';
@@ -17,8 +16,6 @@ interface task {
 
 function TaskListPage() {
     const [task, settask] = useState('')
-    const [checked, setchecked] = useState(false)
-
     const dispatch = useDispatch();
     const Task = useSelector((state: task[]) => state);
     const [taskdata, settaskData] = useState({})
@@ -36,7 +33,7 @@ function TaskListPage() {
                 };
             })
         );
-    }, [])
+    }, [Task])
 
 
     function onPinTask(id: string) {
