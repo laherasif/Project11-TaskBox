@@ -1,47 +1,53 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import "./task.css";
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import StarIcon from '@material-ui/icons/Star';
 import { useDispatch } from 'react-redux';
-import { archiveTask, deleteTask, pinTask } from '../../ReduxStore/redux';
+import { store, add } from '../../ReduxStore';
 
 
 //********************************* */
 export interface taskData {
-  id : string, title : string, state : any
+  id: string, task: string, state: any
 }
- export interface props {
-  task : taskData,
+export interface props {
+  task: taskData,
 }
- const Task : FC<props> = ({task : {id, title,  state}}) => {
+const Task = () => {
+  const [task, settask] = useState('')
   const dispatch = useDispatch();
   console.log(dispatch);
-  
-  return (
-      <div className="maintask">
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          defaultChecked={state === 'Archieved'}
-          name="checked"
-          onClick = {() => dispatch(deleteTask(id))}
-        />
-        <span className="checkbox-custom" onClick={() => dispatch(archiveTask(id))} />
-      </label>
-      <div className="title">
-        <input style = {{border : "none"}} type="text" value={title} readOnly={true} placeholder="Input title" />
-      </div>
 
-      <div className="star" >
-        {state !== 'Archieved' && (
-          // eslint-disable-next-line jsx-a11y/anchor-is-valid
-          <a onClick={() => dispatch(pinTask(id))}>
-            {state === "Pinned" ? <StarIcon/> : <StarBorderIcon/>}
-          </a>
-        )}
+  const AddTask = (e: any) => {
+    e.preventDefault()
+    dispatch(add({ id: 5, task: task }))
+  }
+
+  return (
+    <div>
+      <div className="add">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-3"></div>
+            <div className="col-md-6">
+              <div className="form">
+                <form>
+                  <div className="input-group mb-3">
+                    <input type="text" className="form-control" placeholder="Recipient's username" />
+                      <div className="input-group-append">
+                        <button className="btn btn-info" type="button">Add Task</button>
+                      </div>
+</div>
+                </form>
+              </div>
+              </div>
+              <div className="col-md-3"></div>
+            </div>
+
+          </div>
+        </div>
       </div>
-    </div>
-    )
+  )
 }
 
 export default Task;

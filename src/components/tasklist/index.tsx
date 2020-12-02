@@ -1,96 +1,124 @@
-import React from 'react';
-import { FC } from 'react';
-import Task from '../tasks/index';
-import { taskData } from '../tasks';
-import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { connect } from 'react-redux';
-function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
-    return (
-        <Box position="relative" display="inline-flex">
-            <CircularProgress variant="static" {...props} />
-            <Box
-                top={0}
-                left={0}
-                bottom={0}
-                right={0}
-                position="absolute"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-            >
-                <Typography variant="caption" component="div" color="textSecondary">{`${Math.round(
-                    props.value,
-                )}%`}</Typography>
-            </Box>
-        </Box>
-    );
+import { truncate } from 'fs';
+import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from "react-redux";
+// import { uuid } from 'uuidv4';
+import { pin , remove, add } from "../../ReduxStore";
+// import Task from '../tasks';
+import shortid from 'shortid'
+// import shortid from  'shortid'
+import './style.css';
+interface task {
+    id: string;
+    check: boolean,
+    task: string;
+    status: string;
+    state: "TASK_INBOX" | "TASK_ARCHIVED" | "TASK_PINNED";
 }
 
-export function CircularStatic() {
-    const [progress, setProgress] = React.useState(10);
+function TaskListPage() {
+    const [task, settask] = useState('')
+    const [checked, setchecked] = useState(false)
 
-    React.useEffect(() => {
-        const timer = setInterval(() => {
-            setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10));
-        }, 800);
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
+    const dispatch = useDispatch();
+    const Task = useSelector((state: task[]) => state);
+    const [taskdata, settaskData] = useState({})
 
-    return <CircularProgressWithLabel value={progress} />;
-}
-export interface prop {
-    loading?: boolean,
-    tasks?: taskData[] | undefined
-}
- export const TaskList: FC<prop> = ({ loading, tasks}) => {
 
-    if (loading) {
-        return <div className="Circularloadingprogress" >
-            <CircularStatic />
-        </div>
+    useEffect(() => {
+        settaskData(
+            Task.map(d => {
+                return {
+                    check: false,
+                    id: d.id,
+                    status: d.status,
+                    task: d.task
+                  
+                };
+            })
+        );
+    }, [])
+
+
+    function onPinTask(id: string) {
+        console.log(id);
+
+        dispatch(pin({ id: id }))
+
+
     }
 
-    if (tasks?.length === 0) {
-        return <div className="Notask">
-            <CheckCircleIcon />
-            <h3>
-                You have no task
-            </h3>
-        </div>
+
+    function onUnpinTask(id: string) {
+        dispatch(remove({ id: id }));
     }
 
-    const TaskListwithCorrectOrder = [
-        ...tasks!.filter((task) => task.state === 'Pinned'),
-        ...tasks!.filter((task) => task.state === 'Default'),
-        ...tasks!.filter((task) => task.state === 'Archieved')
-    ];
+    const AddTask = (e: any) => {
+        e.preventDefault()
+        let shortids = shortid()
+        let value = {
+            id: shortids ,
+            task: task,
+            status: "pendding",
+
+        }
+        dispatch(add(value))
+        setTimeout(() => {
+            settask("")
+            
+        }, 2000);
+    }
+
     return (
-        <div>
-            {TaskListwithCorrectOrder?.map(respectivetasks => {
-                return <Task key={respectivetasks.id} task={respectivetasks} />
-            })}
+    
+        <div className="page-content page-container" id="page-content">
+            <div className="padding">
+                <div className="row container d-flex justify-content-center">
+                    <div className="col-md-2"></div>
+                    <div className="col-md-8">
+                        <div className="card px-3">
+                            <div className="card-body">
+                                <h4 className="card-title">Awesome Task Box</h4>
+                                <div className="add-items d-flex">
+                                     <input type="text" className="form-control todo-list-input" value={task} onChange={(e) => settask(e.currentTarget.value)} placeholder="What do you need to do today?" /> 
+                                     <button className="add btn btn-primary font-weight-bold todo-list-add-btn" onClick={AddTask}>Add</button> </div>
+                                <div className="list-wrapper">
+                                    {
+                                        Task.map((item, index: number) => {
+                                            return (
+                                                <ul className="d-flex flex-column-reverse todo-list" key={index}>
+                                                    <li >
+                                                        <div className="form-check"> 
+                                                        <label className="form-check-label">
+                                                            <input className="checkbox" type="checkbox" onClick={() => onPinTask(item.id)} />
+                                                            <i className="input-helper" />
+                                                            
+                                                            <div className={item.status === "complete" ? "completed" :"widget-content-left"} >
+                                                                <div className="widget-heading">{item.task}<div className={item.status === "complete" ? "badge badge-success ml-2" : "badge badge-info ml-2"}>{item.status === "complete" ? "complete" : "pendding"}  </div>
+                                                                </div>
+                                                            </div>
+                                                                <div className="widget-subheading"><i>By laher asif</i></div>
+                                                        </label>
+
+                                                        </div>
+                                                        <i className="remove mdi mdi-close-circle-outline" onClick={() => onUnpinTask(item.id)}/>
+                                                        
+                                                        
+                                                    </li>
+
+                                                </ul>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-2"></div>
+
+                </div>
+            </div>
         </div>
+
     )
 }
-
-TaskList.defaultProps = {
-    tasks: [
-        { id: "1", title: "Task 1", state: "Default" },
-        { id: "2", title: "Task 2", state: "Default" },
-        { id: "3", title: "Task 3", state: "Default" },
-        { id: "4", title: "Task 4", state: "Default" },
-        { id: "5", title: "Task 5", state: "Default" },
-        { id: "6", title: "Task 6", state: "Default" },
-    ],
-}
-
-export default connect(
-    ({ tasks } : any) => ({
-      tasks: tasks.filter((t : taskData) => t.state === 'Default' || t.state === 'Archieved' || t.state === 'Pinned'),
-    })
-  )(TaskList);
+export default TaskListPage

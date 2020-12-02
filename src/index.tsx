@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import store from './ReduxStore/redux';
+import {store} from './ReduxStore';
 import { Provider } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'fontawesome-4.7'
 ReactDOM.render(
   <React.StrictMode>
    <Provider store={store} >
