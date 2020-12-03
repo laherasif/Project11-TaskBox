@@ -18,7 +18,7 @@ function TaskListPage() {
     const [task, settask] = useState('')
     const dispatch = useDispatch();
     const Task = useSelector((state: task[]) => state);
-    const [taskdata, settaskData] = useState({})
+    const [, settaskData] = useState({})
 
 
     useEffect(() => {
